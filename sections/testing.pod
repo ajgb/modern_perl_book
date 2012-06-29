@@ -1,16 +1,18 @@
-=head1 Testing
+=head1 Testowanie
 
 Z<testing>
 
 X<testing>
 
-I<Testing> is the process of writing and running small pieces of code to verify
-that your software behaves as intended. Effective testing automates a process
-you've already done countless times already: write some code, run it, and see
-that it works. This I<automation> is essential. Rather than relying on humans
-to perform repeated manual checks perfectly, let the computer do it.
+I<Testowanie> jest procesem pisania i uruchamiania krótkich kawałków kodu aby
+zweryfikować że Twoje oprogramowanie zachowuje się jak założyłeś. Sprawne
+testowanie automatyzuje proces który wykonywałeś już niezliczoną ilość razy:
+napisz trochę kodu, uruchom go i sprawdź czy działa. Ta I<automatyzacja> jest
+niezbędna. Zamiast polegać na ludziach wykonujących powtarzające się testy,
+niech to robi komputer.
 
-Perl 5 provides great tools to help you write the right tests.
+Perl 5 dostarcza świetne narzędzia które pomogą Ci w napisaniu odpowiednich
+testów.
 
 =head2 Test::More
 
@@ -18,16 +20,16 @@ X<C<Test::More>>
 X<C<ok()>>
 X<testing; C<ok()>>
 
-Perl testing begins with the core module C<Test::More> and its C<ok()>
-function. C<ok()> takes two parameters, a boolean value and a string which
-describes the test's purpose:
+Testowanie Perla zaczyna się od standardowego modułu C<Test::More> i jego
+funkcji C<ok()>. C<ok()> przyjmuje dwa parametry, wartośc logiczną oraz tekst
+który opisze cel testu:
 
 =begin programlisting
 
-    ok(   1, 'the number one should be true'         );
-    ok(   0, '... and zero should not'               );
-    ok(  '', 'the empty string should be false'      );
-    ok( '!', '... and a non-empty string should not' );
+    ok(   1, 'numer jeden powininen oznaczać prawdę'    );
+    ok(   0, '... ale zero już nie'                     );
+    ok(  '', 'pusty napis oznacza fałsz'                );
+    ok( '!', '... ale niepusty już nie'                 );
 
     done_testing();
 
@@ -35,64 +37,66 @@ describes the test's purpose:
 
 X<testing; assertion>
 
-Any condition you can test in your program can eventually become a binary
-value. Every test I<assertion> is a simple question with a yes or no answer:
-does this tiny piece of code work as I intended?  A complex program may have
-thousands of individual conditions, and, in general, the smaller the
-granularity the better. Isolating specific behaviors into individual assertions
-lets you narrow down bugs and misunderstandings, especially as you modify the
-code in the future.
+Każdy warunek jaki możesz testować w swoim programie może w końcu przyjąć
+wartość binarną. Każde I<zapewnienie> testu jest prostym pytaniem z
+odpowiedzią tak lub nie: czy ten mały kawałek kodu działa jak założyłem?
+Rozbudowany program może mieć tysiące osobnych warunków, ale w zasadzie im
+mniejsza szczegółowośc tym lepiej. Wyizolowanie specyficznego zachowania w
+osobne zapewnienia pozwoli Ci zlokalizować błędy i nieporozumienia,
+szczególnie gdy będziesz modyfikował swój kod w przyszłości.
 
-The function C<done_testing()> tells C<Test::More> that the program has
-successfully executed all of the expected testing assertions. If the program
-encountered a runtime exception or otherwise exited unexpectedly before the
-call to C<done_testing()>, the test framework will notify you that something
-went wrong. Without a mechanism like C<done_testing()>, how would you I<know>?
-Admittedly this example code is too simple to fail, but code that's too simple
-to fail fails far more often than anyone would expect.
+Funkcja C<done_testing()> oznajmia C<Test::More> że program z powodzeniem
+wykonał wszystkie założone testy. Jeśli program napotkał wyjątek
+uruchomieniowy lub z innego powodu niespodziewanie zakończył działanie przed
+wywołaniem C<done_testing()>, system testujący powiadomi Cię że coś poszło
+źle. Bez mechanizmu takiego jak C<done_testing()>, skąd miałbyś to
+I<wiedzieć>? Wprawdzie powyższy przykładowy kod jest zbyt prosty aby zawieść,
+ale zwykle kod zbyt prosty aby nawalić, zawiesza się częściej niż ktokolwiek
+się spodziewa.
 
 =begin sidebar
 
 X<testing; plan>
 X<C<plan()>>
 
-C<Test::More> also allows the use of a I<test plan> to represent the number of
-individual assertions you plan to run:
+C<Test::More> umożliwa równiez użycie I<planu testu> aby określić liczbę
+poszczególnych testów które zamierzasz wykonać:
 
 =begin programlisting
 
     use Test::More tests => 4;
 
-    ok(   1, 'the number one should be true'         );
-    ok(   0, '... and zero should not'               );
-    ok(  '', 'the empty string should be false'      );
-    ok( '!', '... and a non-empty string should not' );
+    ok(   1, 'numer jeden powininen oznaczać prawdę'    );
+    ok(   0, '... ale zero już nie'                     );
+    ok(  '', 'pusty napis oznacza fałsz'                );
+    ok( '!', '... ale niepusty już nie'                 );
 
 =end programlisting
 
-The C<tests> argument to C<Test::More> sets the test plan for the program. This
-is a safety net. If fewer than four tests ran, something went wrong.  If more
-than four tests ran, something went wrong.
+Parametr C<tests> oznajmia C<Test::More> ile testów planujesz dla danego
+programu. To siatka bezpieczeństwa. Jeśli mniej niż cztery testy zostały
+wykonane, coś poszło źle. Jeśli więcej niż cztery testy zostały wykonane,
+również coś poszło źle.
 
 =end sidebar
 
-=head2 Running Tests
+=head2 Uruchamianie testów
 
 Z<running_tests>
 
-The resulting program is now a full-fledged Perl 5 program which produces the
-output:
+Napisany kod jest teraz pełnoprawnym programem Perl 5 którego wynik jest
+taki:
 
 =begin screen
 
-    ok 1 - the number one should be true
-    not ok 2 - ... and zero should not
-    #   Failed test '... and zero should not'
+    ok 1 - numer jeden powininen oznaczać prawdę
+    not ok 2 - ... ale zero już nie
+    #   Failed test '... ale zero już nie'
     #   at truth_values.t line 4.
-    not ok 3 - the empty string should be false
-    #   Failed test 'the empty string should be false'
+    not ok 3 - pusty napis oznacza fałsz
+    #   Failed test 'pusty napis oznacza fałsz'
     #   at truth_values.t line 5.
-    ok 4 - ... and a non-empty string should not
+    ok 4 - ... ale niepusty już nie
     1..4
     # Looks like you failed 2 tests of 4.
 
@@ -101,29 +105,31 @@ output:
 X<TAP (Test Anything Protocol)>
 X<testing; TAP>
 
-This format adheres to a standard of test output called I<TAP>, the I<Test
-Anything Protocol> (U<http://testanything.org/>). Failed TAP tests produce
-diagnostic messages as a debugging aid.
+Ten format przestrzega standardu wyniku testu nazwanego I<TAP>, I<Protokół
+Testowania Wszystkiego - Test Anything Protocol> (U<http://testanything.org/>).
+Oblany test TAP wyświetla informacje diagnostyczne jako pomoc przy usuwaniu
+błędów z programu.
 
 X<C<Test::Harness>>
 X<C<prove>>
 X<testing; C<prove>>
 X<testing; running tests>
 
-The output of a test file containing multiple assertions (especially multiple
-I<failed> assertions) can be verbose. In most cases, you want to know either
-that everything passed or the specifics of any failures. The core module
-C<Test::Harness> interprets TAP, and its related program C<prove> runs tests
-and displays only the most pertinent information:
+Wynik pliku testowego zawierającego wiele założeń (a w szczególności gdy wiele
+z nich jest I<nieudanych>) może być zbyt szczegółowych. W więkoszści
+przypadków chcesz wiedzieć czy wszystkie testy przebiegły pomyślnie lub
+informacje dotyczące ewentualnych błędów. Standardowy moduł C<Test::Harness>
+interpretuje TAP a jego pochodny program C<prove> uruchamia testy i wyświetla
+jedynie najważniejsze informacje:
 
 =begin screen
 
     $ B<prove truth_values.t>
     truth_values.t .. 1/?
-    #   Failed test '... and zero should not'
+    #   Failed test '... ale zero już nie'
     #   at truth_values.t line 4.
 
-    #   Failed test 'the empty string should be false'
+    #   Failed test 'pusty napis oznacza fałsz'
     #   at truth_values.t line 5.
     # Looks like you failed 2 tests of 4.
     truth_values.t .. Dubious, test returned 2
@@ -137,19 +143,19 @@ and displays only the most pertinent information:
 
 =end screen
 
-That's a lot of output to display what is already obvious: the second and third
-tests fail because zero and the empty string evaluate to false.  It's easy to
-fix that failure by inverting the sense of the condition with the use of
-boolean coercion (L<boolean_coercion>):
+Jest tu dużo informacji które już znamy: drugi i trzeci test się nie udał
+ponieważ zero i pusty napis oznaczają fałsz. Jest to proste do naprawienia
+poprzez odwrócenie sensu warunku używając konwersji do wartości logicznej 
+(L<boolean_coercion>):
 
 =begin programlisting
 
-    ok(   B<!> 0, '... and zero should not'          );
-    ok(  B<!> '', 'the empty string should be false' );
+    ok(   B<!> 0, '... ale zero już nie'        );
+    ok(  B<!> '', 'pusty napis oznacza fałsz'   );
 
 =end programlisting
 
-With those two changes, C<prove> now displays:
+Z tymi dwoma zmianami, C<prove> teraz wyświetli:
 
 =begin screen
 
@@ -161,49 +167,50 @@ With those two changes, C<prove> now displays:
 
 =begin sidebar
 
-See C<perldoc prove> for valuable test options, such as running tests in
-parallel (C<-j>), automatically adding F<lib/> to Perl's include path (C<-l>),
-recursively running all test files found under F<t/> (C<-r t>), and running
-slow tests first (C<--state=slow,save>).
+Zobacz C<perldoc prove> dla innych pomocnych opcji, takich jak uruchamianie
+testów równolegle (C<-j>), automatyczne dodawanie F<lib/> do ścieżki bibliotek
+Perla (C<-l>), rekursywne uruchomienie wszystkich plików testowych
+znajdujących się w F<t/> (C<-r t>) i uruchomienie wolnych testów na początku
+(C<--state=slow,save>).
 
 X<C<proveall>>
 X<testing; C<proveall> alias>
-The bash shell alias C<proveall> may prove useful:
+Alias powłoki bash C<proveall> może się okazać użyteczny:
 
     alias proveall='prove -j9 --state=slow,save -lr t'
 
 =end sidebar
 
-=head2 Better Comparisons
+=head2 Lepsze Porównania
 
-Even though the heart of all automated testing is the boolean condition "is
-this true or false?", reducing everything to that boolean condition is tedious
-and offers few diagnostic possibilities. C<Test::More> provides several other
-convenient assertion functions.
+Chociaż sednem wszystkich zautomatyzowanych testów jest warunek logiczny
+"prawda czy fałsz?", redukowanie wszystkiego do tej testu logicznego byłoby
+uciążliwe i oferowałoby niewiele możliwości diagnostycznych. C<Test::More>
+dostarcz kilka innych przydatnych funkcji testujących.
 
 X<C<is()>>
 X<testing; C<is()>>
 X<operators; C<eq>>
 
-The C<is()> function compares two values using the C<eq> operator. If the
-values are equal, the test passes. Otherwise, the test fails with a diagnostic
-message:
+Funkcja C<is()> porównuje dwie wartości używając operatora C<eq>. Jeśli te
+wartości są sobie równe, test przechodzi pomyślnie. W przeciwny przypadku test
+jest oblany i informacja diagnostyczna jest wyświetlona:
 
 =begin programlisting
 
-    is(         4, 2 + 2, 'addition should work' );
-    is( 'pancake',   100, 'pancakes are numeric' );
+    is(        4, 2 + 2, 'dodawanie powinna działać' );
+    is( 'placek',   100, 'placki są numerami'        );
 
 =end programlisting
 
-As you might expect, the first test passes and the second fails:
+Jak zapewne oczekujesz, pierwszy test przechodzi a drugi nie:
 
 =begin screen
 
     t/is_tests.t .. 1/2
-    #   Failed test 'pancakes are numeric'
+    #   Failed test 'placki są numerami'
     #   at t/is_tests.t line 8.
-    #          got: 'pancake'
+    #          got: 'placek'
     #     expected: '100'
     # Looks like you failed 1 test of 2.
 
